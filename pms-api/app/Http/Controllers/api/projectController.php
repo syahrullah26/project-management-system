@@ -1,44 +1,48 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Project;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Project;
 
-class projectController extends Controller
+class ProjectController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $projects = Project::latest()->paginate(6);
 
-        $projects-> getCollection()->transform(function($project){
+        $projects->getCollection()->transform(function ($project) {
             return [
                 'id' => $project->id,
-                'name'=> $project-> name
+                'name' => $project->name
             ];
         });
     }
 
-    public function store(Request $request, $id){
-        $validated = $request-> validate([
+    public function store(Request $request, $id)
+    {
+        $validated = $request->validate([
             'name' => 'required|string|max:255'
         ]);
         $project = Project::create($validated);
 
-        return response()-> json([
+        return response()->json([
             'success' => true,
-            'data'=> $project,
+            'data' => $project,
             'message' => 'project berhasil dibuat',
         ], 201);
     }
-    
 
-    public function update(Request $request, $id){
+
+    public function update(Request $request, $id)
+    {
         $project = Project::findOrFail($id);
 
-        $validated= $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255'
         ]);
-        
+
         $project->update($validated);
 
         return response()->json([
@@ -46,17 +50,16 @@ class projectController extends Controller
             'data' => $project,
             'message' => 'Project berahasil diupdate'
         ]);
-
     }
-    public function destroy($id){
+    public function destroy($id)
+    {
         $project = Project::findOrFail($id);
-        $project-> delete();
+        $project->delete();
 
         return response()->json([
-            'success' =>true,
-            'message'=> 'Project Berhasil dihapus'
+            'success' => true,
+            'message' => 'Project Berhasil dihapus'
 
         ]);
-
     }
 }
