@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import IndexLayouts from '@/layouts/IndexLayouts.vue'
 import Index from '@/views/dashboard/Index.vue'
-import project from '@/views/project/project.vue'
-import reports from '@/views/reports/reports.vue'
+import Project from '@/views/project/Project.vue'
+import Reports from '@/views/reports/Reports.vue'
 
 
 const router = createRouter({
@@ -20,12 +20,12 @@ const router = createRouter({
         {
           path : '/project',
           name : 'project',
-          component: project,
+          component: Project,
         },
         {
           path : '/reports',
           name : 'reports',
-          component : reports,
+          component : Reports,
         },
       ],
     },
