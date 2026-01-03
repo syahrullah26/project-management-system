@@ -12,13 +12,27 @@ class ProjectController extends Controller
     {
         $projects = Project::latest()->paginate(6);
 
+        if ($projects->isEmpty()) {
+            return response()->json([
+                'message' => 'Tidak ada data project',
+                'data' => [],
+                'meta' => [
+                    'current_page' => $projects->currentPage(),
+                    'total' => 0,
+                ]
+            ], 200);
+        }
+
         $projects->getCollection()->transform(function ($project) {
             return [
                 'id' => $project->id,
-                'name' => $project->name
+                'name' => $project->name,
             ];
         });
+
+        return response()->json($projects, 200);
     }
+
 
     public function store(Request $request, $id)
     {
