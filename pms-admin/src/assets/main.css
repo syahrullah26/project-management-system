@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-default: 'Special Elite', cursive;
+  --color-primary: #f2c7c7;
+  --color-secondary: #ffffe3;
+  --color-third: #d5f3d8;
+  --color-fourth: #ffb7c5;
+  --color-text-primary: #2b2b2b;
+  --color-text-secondary: #4a3f35;
+  --color-third-accent: #3f5f4f;
+}
