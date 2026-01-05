@@ -17,10 +17,10 @@ class ReportsController extends Controller
         $data->getCollection()->transform(function ($report) {
             return [
                 'id' => $report->id,
-                'project' => [
+                'project' => $report->project ? [
                     'id' => $report->project->id,
                     'name' => $report->project->name,
-                ],
+                ] : null,
                 'title' => $report->title,
                 'description' => $report->description,
                 'type' => $report->type,
@@ -31,6 +31,7 @@ class ReportsController extends Controller
 
         return response()->json($data);
     }
+
 
     public function store(Request $request)
     {
@@ -57,7 +58,7 @@ class ReportsController extends Controller
         $report = Reports::findOrFail($id);
 
         $validated = $request->validate([
-            'project_id' => ['required', 'exists:project,id'], 
+            'project_id' => ['required', 'exists:project,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'type' => ['required', Rule::in(['feature', 'bug'])],
@@ -73,6 +74,27 @@ class ReportsController extends Controller
             'message' => 'Report berhasil diperbarui.'
         ]);
     }
+
+    public function updateStatus($id)
+    {
+        $report = Reports::findOrFail($id);
+
+        if ($report->status !== 'onprogress') {
+            return response()->json([
+                'message' => 'Status sudah selesai'
+            ], 400);
+        }
+        $report->update([
+            'status' => 'done'
+        ]);
+
+        return response()->json([
+            'message' => 'Status berhasil diubah ke done',
+            'data' => $report
+        ]);
+    }
+
+
 
     public function destroy($id)
     {

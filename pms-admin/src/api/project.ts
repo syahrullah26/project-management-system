@@ -18,3 +18,10 @@ export const getProject = async(page = 1): Promise<PaginatedProject> => {
     })
     return res.data
 }
+
+export const createProject = async(data: FormData): Promise<Project> =>{
+    const res = await axios.post('/project', data,{
+        headers: {"Content-Type":"multipart/form-data"},
+    })
+    return res.data.data
+}
