@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { createProject, getProject, updateProject } from '@/api/project'
-import type { PaginatedProject, Project } from '@/api/project'
+import type {  Project } from '@/api/project'
 import { RouterLink } from 'vue-router'
 defineOptions({ name: 'ProjectList' })
 

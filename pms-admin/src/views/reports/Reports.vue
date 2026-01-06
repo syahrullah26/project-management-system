@@ -5,6 +5,7 @@ import { getProject } from '@/api/project'
 import type { Project } from '@/api/project'
 import type { Reports } from '@/api/reports'
 import { getReports, createReports, updateReports, updateReportsStatus } from '@/api/reports'
+import DetailModal from '@/components/DetailModal.vue'
 defineOptions({ name: 'ReportsList' })
 
 const reports = ref<Reports[]>([])
@@ -18,6 +19,13 @@ const projectByID = ref<number | null>(null)
 const typeReports = ref<'feature' | 'bug' | null>(null)
 const priority = ref<'low' | 'medium' | 'high' | null>(null)
 const status = ref<'onprogress' | 'done' | null>(null)
+
+//FILTER DATA
+const statusFilter = ref<'onprogress' | 'done' | null>(null)
+
+// STATE MODAL
+const showDetailModal = ref(false)
+const selectedReport = ref<any>(null)
 
 // STATE LOAD AND TOAST
 const loadingProject = ref(false)
@@ -39,21 +47,34 @@ const search = ref('')
 const currentPage = ref(1)
 const perPage = 5
 
-const filteredData = computed(() =>
-  reports.value.filter((r) => r.title.toLowerCase().includes(search.value.toLowerCase())),
-)
+const filteredData = computed(() => {
+  return reports.value
+    .filter((r) => r.title.toLowerCase().includes(search.value.toLowerCase()))
+    .filter((r) => {
+      if (statusFilter.value === null) return true
+      return r.status === statusFilter.value
+    })
+})
 
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * perPage
   return filteredData.value.slice(start, start + perPage)
 })
 
+const openDetail = (report: any) => {
+  selectedReport.value = report
+  showDetailModal.value = true
+}
+
 // LOAD ALL DATA
 const loadAllData = async () => {
   loadingProject.value = true
   loadingReports.value = true
   try {
-    const [projectData, reportsData] = await Promise.all([getProject(), getReports()])
+    const [projectData, reportsData] = await Promise.all([
+      getProject(),
+      getReports(currentPage.value, statusFilter.value),
+    ])
     project.value = projectData.data
     reports.value = reportsData.data
   } catch {
@@ -281,6 +302,32 @@ onMounted(loadAllData)
             <h1 class="text-text-secondary text-xl font-bold">Reports Data</h1>
           </div>
           <hr class="border-text-primary mt-4 mb-4" />
+          <div class="flex gap-3 mb-4">
+            <button
+              @click="statusFilter = null"
+              :class="statusFilter === null ? 'bg-third text-white' : 'bg-secondary'"
+              class="px-3 py-1 rounded-md text-sm border transition cursor-pointer"
+            >
+              All
+            </button>
+
+            <button
+              @click="statusFilter = 'onprogress'"
+              :class="statusFilter === 'onprogress' ? 'bg-orange-500 text-white' : 'bg-secondary'"
+              class="px-3 py-1 rounded-md text-sm border transition cursor-pointer"
+            >
+              On Progress
+            </button>
+
+            <button
+              @click="statusFilter = 'done'"
+              :class="statusFilter === 'done' ? 'bg-green-600 text-white' : 'bg-secondary'"
+              class="px-3 py-1 rounded-md text-sm border transition cursor-pointer"
+            >
+              Done
+            </button>
+          </div>
+
           <div class="grid grid-cols-3 mb-3">
             <input v-model="search" placeholder="Search..." class="form-input mb-2" />
           </div>
@@ -296,7 +343,7 @@ onMounted(loadAllData)
                   <th class="px-4 py-3 border">Type</th>
                   <th class="px-4 py-3 border">Priority</th>
                   <th class="px-4 py-3 border">Status</th>
-                  <th class="px-4 py-3 border text-center" colspan="2">Action</th>
+                  <th class="px-4 py-3 border text-center" colspan="3">Action</th>
                 </tr>
               </thead>
 
@@ -348,24 +395,32 @@ onMounted(loadAllData)
                   </td>
 
                   <!-- ACTION -->
+
                   <td class="px-4 py-3 border text-center">
                     <button
-                      @click="editReports(item)"
-                      class="text-xs px-3 py-1 rounded-md bg-linear-to-r from-third to-secondary text-text-primary border border-black/5 hover:from-third hover:to-primary transition"
+                      @click="openDetail(item)"
+                      class="rounded-md bg-gradient-to-r from-[#3F66D6] to-secondary border border-black/5 px-3 py-1 text-xs text-text-primary hover:from-[#2F55C6] hover:to-primary transition-all duration-300 cursor-pointer"
                     >
-                      Edit
+                      Detail
                     </button>
                   </td>
-
                   <td class="px-4 py-3 border text-center">
                     <button
                       v-if="item.status === 'onprogress'"
                       @click="markAsDone(item.id)"
-                      class="text-xs px-3 py-1 rounded-md bg-linear-to-r from-primary to-secondary text-text-primary border border-black/5 hover:bg-linear-to-r from-primary to-fourth transition"
+                      class="text-xs px-3 py-1 rounded-md bg-linear-to-r from-primary to-secondary text-text-primary border border-black/5 hover:from-fourth hover:to-third transition-all duration-300 cursor-pointer"
                     >
                       Mark as Done
                     </button>
                     <span v-else class="text-xs text-gray-400 italic"> — </span>
+                  </td>
+                  <td class="px-4 py-3 border text-center">
+                    <button
+                      @click="editReports(item)"
+                      class="text-xs px-3 py-1 rounded-md bg-linear-to-r from-third to-secondary text-text-primary border border-black/5 hover:from-third hover:to-primary transition cursor-pointer"
+                    >
+                      Edit
+                    </button>
                   </td>
                 </tr>
               </tbody>
@@ -396,4 +451,72 @@ onMounted(loadAllData)
       </div>
     </section>
   </main>
+  <DetailModal v-model="showDetailModal">
+    <div v-if="selectedReport" class="space-y-6 text-sm text-gray-700">
+      <div class="space-y-2">
+        <h4 class="text-lg font-semibold leading-tight text-text-secondary">
+          {{ selectedReport.title }}
+        </h4>
+        <div class="flex items-center gap-2 text-xs text-gray-500">
+          <span>Project :</span>
+          <span
+            class="max-w-full truncate rounded-full bg-secondary px-3 py-1 font-semibold text-text-secondary"
+          >
+            {{ selectedReport.project.name }}
+          </span>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-black/5 bg-secondary/30 p-4">
+        <p class="mb-2 text-xs font-semibold text-gray-500">Description</p>
+        <p class="leading-relaxed">
+          {{ selectedReport.description }}
+        </p>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4">
+        <div class="rounded-xl border border-black/5 bg-white p-3 shadow-sm">
+          <p class="mb-2 text-xs text-gray-500">Type</p>
+          <span
+            class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+            :class="
+              selectedReport.type === 'feature'
+                ? 'bg-blue-100 text-blue-700'
+                : 'bg-red-100 text-red-700'
+            "
+          >
+            {{ selectedReport.type }}
+          </span>
+        </div>
+
+        <div class="rounded-xl border border-black/5 bg-white p-3 shadow-sm">
+          <p class="mb-2 text-xs text-gray-500">Priority</p>
+          <span
+            class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+            :class="{
+              'bg-green-100 text-green-700': selectedReport.priority === 'low',
+              'bg-yellow-100 text-yellow-700': selectedReport.priority === 'medium',
+              'bg-red-100 text-red-700': selectedReport.priority === 'high',
+            }"
+          >
+            {{ selectedReport.priority }}
+          </span>
+        </div>
+
+        <div class="rounded-xl border border-black/5 bg-white p-3 shadow-sm">
+          <p class="mb-2 text-xs text-gray-500">Status</p>
+          <span
+            class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+            :class="
+              selectedReport.status === 'onprogress'
+                ? 'bg-orange-100 text-orange-700'
+                : 'bg-green-100 text-green-700'
+            "
+          >
+            {{ selectedReport.status === 'onprogress' ? 'On Progress' : 'Done' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </DetailModal>
 </template>

@@ -26,6 +26,7 @@ export interface UpdateReportStatusPayload {
   status: 'onprogress' | 'done'
 }
 
+export type ReportStatus = 'onprogress' | 'done' | null
 
 export interface PaginatedReports {
   data: Reports[]
@@ -33,12 +34,17 @@ export interface PaginatedReports {
   last_page: number
 }
 
-export const getReports = async (page = 1): Promise<PaginatedReports> => {
+export const getReports = async (page = 1, status?: ReportStatus): Promise<PaginatedReports> => {
   const res = await axios.get('/reports', {
-    params: { page },
+    params: {
+      page,
+      ...(status && { status }),
+    },
   })
+
   return res.data
 }
+
 export const createReports = async (payload: CreateReportsPayload): Promise<Reports> => {
   const res = await axios.post('/reports', payload)
   return res.data.data

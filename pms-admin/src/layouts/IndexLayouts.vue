@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import IndexSidebar from '@/components/IndexSidebar.vue';
+
 </script>
 
 <template>

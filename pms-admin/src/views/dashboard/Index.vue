@@ -26,7 +26,7 @@ const paginatedData = computed(() => {
 const loadData = async () => {
   loading.value = true
   try {
-    const [projectData, reportsData] = await Promise.all([getProject(), getReports()])
+    const [projectData, reportsData] = await Promise.all([getProject(), getReports(currentPage.value, 'onprogress')])
 
     project.value = projectData.data
     reports.value = reportsData.data

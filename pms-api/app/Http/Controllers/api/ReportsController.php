@@ -3,17 +3,22 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use App\Models\Reports;
 use Illuminate\Validation\Rule;
 
 class ReportsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $data = Reports::with([
+        $query = Reports::with([
             'project:id,name'
-        ])->paginate(6);
+        ]);
+        if($request->filled('status')){
+            $query->where('status',$request->status);
+        }
+        $data = $query->paginate(6);
         $data->getCollection()->transform(function ($report) {
             return [
                 'id' => $report->id,
@@ -29,6 +34,7 @@ class ReportsController extends Controller
             ];
         });
 
+      
         return response()->json($data);
     }
 
