@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { createProject, getProject } from '@/api/project'
+import { createProject, getProject, updateProject } from '@/api/project'
 import type { PaginatedProject, Project } from '@/api/project'
 import { RouterLink } from 'vue-router'
 defineOptions({ name: 'ProjectList' })
 
 const project = ref<Project[]>([])
-const currentPage = ref<PaginatedProject | null>(null)
-const perPage = ref(0)
 const submitting = ref(false)
 const loadingProject = ref(false)
 const showProjectForm = ref(false)
@@ -20,8 +18,19 @@ const showToast = (message: string, type: 'success' | 'error') => {
 }
 
 // state form
-
+const projectID = ref<number | null>(null)
 const namaProject = ref('')
+
+// EDIT MODE
+
+const isEditting = ref(false)
+
+const editProject = (dataProject: Project) => {
+  showProjectForm.value = true
+  isEditting.value = true
+  projectID.value = dataProject.id
+  namaProject.value = dataProject.name
+}
 
 const loadProject = async () => {
   loadingProject.value = true
@@ -43,11 +52,22 @@ const submitProject = async () => {
 
   submitting.value = true
   try {
-    const formData = new FormData()
-    formData.append('name', namaProject.value)
-    await createProject(formData)
-    showToast('Project berhasil dibuat', 'success')
+    if (isEditting.value && projectID.value) {
+      const formData = new FormData()
+      formData.append('name', namaProject.value)
+      await updateProject(projectID.value, {
+        name : namaProject.value
+      })
+      showToast('Project berhasil diedit', 'success')
+    } else {
+      const formData = new FormData()
+      formData.append('name', namaProject.value)
+      await createProject(formData)
+      showToast('Project berhasil dibuat', 'success')
+    }
     resetForm()
+
+    await loadProject()
   } catch {
     showToast('Gagal membuat project', 'error')
   } finally {
@@ -155,15 +175,28 @@ const resetForm = () => {
         </div>
         <hr class="border-text-secondary space-y-4 mt-4 mb-4" />
         <p v-if="loadingProject" class="text-third">Loading...</p>
-        <ul v-else class="space-y-2">
-          <li
-            v-for="(projects, index) in project"
-            :key="projects.id"
-            class="bg-secondary p-3 rounded-2xl text-text-primary border border-black/5"
-          >
-            {{ (currentPage?.current_page || 0) - 1 * perPage + index + 1 }} {{ projects.name }}
-          </li>
-        </ul>
+        <div class="relative overflow-x-auto rounded-xl border border-black/10 shadow-sm">
+          <table class="min-w-full text-sm text-left">
+            <!-- HEADER -->
+            <thead class="bg-secondary text-text-secondary sticky top-0 z-10">
+              <th class="border px-4 py-4">No</th>
+              <th class="border px-4 py-4">Nama Project</th>
+              <th class="border px-4 py-4">Action</th>
+            </thead>
+            <tr v-for="(data, index) in project" :key="data.id">
+              <td class="border px-4 py-4">{{ index + 1 }}</td>
+              <td class="border px-4 py-4">{{ data.name }}</td>
+              <td class="border px-4 py-4">
+                <button
+                  @click="editProject(data)"
+                  class="text-xs px-3 py-1 rounded-md bg-linear-to-r from-third to-secondary text-text-primary border border-black/5 hover:from-third hover:to-primary transition"
+                >
+                  Edit
+                </button>
+              </td>
+            </tr>
+          </table>
+        </div>
       </div>
     </section>
   </main>
