@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { createProject, getProject, updateProject } from '@/api/project'
-import type {  Project } from '@/api/project'
+import type { Project } from '@/api/project'
 import { RouterLink } from 'vue-router'
 defineOptions({ name: 'ProjectList' })
 
@@ -56,7 +56,7 @@ const submitProject = async () => {
       const formData = new FormData()
       formData.append('name', namaProject.value)
       await updateProject(projectID.value, {
-        name : namaProject.value
+        name: namaProject.value,
       })
       showToast('Project berhasil diedit', 'success')
     } else {
@@ -83,7 +83,7 @@ const resetForm = () => {
 </script>
 <template>
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-    <section>
+    <section data-aos="fade-left" data-aos-duration="1000">
       <div class="gap-4 auto-rows-fr">
         <div
           class="bg-white rounded-2xl p-6 shadow-sm border border-black/5 h-full flex flex-col justify-between"
@@ -128,7 +128,7 @@ const resetForm = () => {
             leave-from-class="opacity-100 max-h-[1000px]"
             leave-to-class="opacity-0 max-h-0"
           >
-            <div v-if="showProjectForm" class="space-y-6 overflow-hidden mt-4">
+            <div v-if="showProjectForm" class="space-y-6 overflow-hidden mt-4" data-aos="fade-down" data-aos-duration="600">
               <div class="flex justify-center">
                 <div class="w-full max-w-3xl">
                   <div class="form-group">
@@ -166,7 +166,7 @@ const resetForm = () => {
       </div>
     </section>
 
-    <section>
+    <section data-aos="fade-up" data-aos-duration="1000">
       <div
         class="bg-white rounded-2xl p-6 shadow-sm border border-black/5 h-full flex flex-col justify-between"
       >
@@ -176,14 +176,20 @@ const resetForm = () => {
         <hr class="border-text-secondary space-y-4 mt-4 mb-4" />
         <p v-if="loadingProject" class="text-third">Loading...</p>
         <div class="relative overflow-x-auto rounded-xl border border-black/10 shadow-sm">
-          <table class="min-w-full text-sm text-left">
+          <table class="min-w-full text-sm text-center">
             <!-- HEADER -->
             <thead class="bg-secondary text-text-secondary sticky top-0 z-10">
-              <th class="border px-4 py-4">No</th>
-              <th class="border px-4 py-4">Nama Project</th>
-              <th class="border px-4 py-4">Action</th>
+              <tr>
+                <th class="border px-4 py-4">No</th>
+                <th class="border px-4 py-4">Nama Project</th>
+                <th class="border px-4 py-4">Action</th>
+              </tr>
             </thead>
-            <tr v-for="(data, index) in project" :key="data.id">
+            <tr
+              v-for="(data, index) in project"
+              :key="data.id"
+              class="odd:bg-white even:bg-secondary/40 hover:bg-secondary/70 transition"
+            >
               <td class="border px-4 py-4">{{ index + 1 }}</td>
               <td class="border px-4 py-4">{{ data.name }}</td>
               <td class="border px-4 py-4">

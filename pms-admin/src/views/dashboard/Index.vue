@@ -26,7 +26,10 @@ const paginatedData = computed(() => {
 const loadData = async () => {
   loading.value = true
   try {
-    const [projectData, reportsData] = await Promise.all([getProject(), getReports(currentPage.value, 'onprogress')])
+    const [projectData, reportsData] = await Promise.all([
+      getProject(),
+      getReports(currentPage.value, 'onprogress'),
+    ])
 
     project.value = projectData.data
     reports.value = reportsData.data
@@ -51,6 +54,8 @@ onMounted(loadData)
     <!-- Header Section  -->
     <section
       class="bg-white rounded-2xl p-6 shadow-sm border border-black/5 flex flex-col sm:flex-row sm:justify-between sm:items-center"
+      data-aos="fade-down"
+      data-aos-duration="1000"
     >
       <h1 class="text-text-secondary text-xl font-semibold">Dashboard</h1>
       <p class="text-text-primary text-sm">Welcome to admin dashboard</p>
@@ -58,7 +63,12 @@ onMounted(loadData)
     <!-- Card Section  -->
     <section>
       <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-4 auto-rows-fr">
-        <RouterLink to="/project" class="group block h-full">
+        <RouterLink
+          to="/project"
+          class="group block h-full"
+          data-aos="fade-right"
+          data-aos-duration="1000"
+        >
           <div
             class="bg-white rounded-2xl p-6 shadow-sm border border-black/5 h-full flex flex-col justify-between transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-md group-hover:border-fourth/40"
           >
@@ -72,7 +82,12 @@ onMounted(loadData)
           </div>
         </RouterLink>
 
-        <RouterLink to="/reports" class="group block h-full">
+        <RouterLink
+          to="/reports"
+          class="group block h-full"
+          data-aos="fade-left"
+          data-aos-duration="1000"
+        >
           <div
             class="bg-white rounded-2xl p-6 shadow-sm border border-black/5 h-full flex flex-col justify-between transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-md group-hover:border-fourth/40"
           >
@@ -88,7 +103,7 @@ onMounted(loadData)
       </div>
     </section>
     <!-- Table Section -->
-    <section>
+    <section data-aos="fade-up" data-aos-duration="1000">
       <div class="gap-4 auto-rows-fr">
         <div
           class="bg-white rounded-2xl p-6 shadow-sm border border-black/5 h-full flex flex-col justify-between"

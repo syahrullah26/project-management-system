@@ -42,7 +42,7 @@ class ReportsController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'project_id' => ['required', 'exists:project,id'], // table project
+            'project_id' => ['required', 'exists:project,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'type' => ['required', Rule::in(['feature', 'bug'])],

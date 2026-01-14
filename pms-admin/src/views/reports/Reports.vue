@@ -164,7 +164,7 @@ onMounted(loadAllData)
 </script>
 <template>
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-    <section>
+    <section data-aos="fade-left" data-aos-duration="1000">
       <div class="gap-4 auto-rows-fr">
         <div
           class="bg-white rounded-2xl p-6 shadow-sm border border-black/5 h-full flex flex-col justify-between"
@@ -208,7 +208,7 @@ onMounted(loadAllData)
             leave-from-class="opacity-100 max-h-[1000px]"
             leave-to-class="opacity-0 max-h-0"
           >
-            <div v-if="showReportForm">
+            <div v-if="showReportForm" data-aos="fade-down" data-aos-duration="600">
               <div class="grid grid-cols-2 md:grid-cols-1 gap-6 mt-4">
                 <div class="form-group">
                   <label for="title" class="form-label">Title Report</label>
@@ -293,7 +293,7 @@ onMounted(loadAllData)
       </div>
     </section>
     <!-- TABLE REPORT LIST  -->
-    <section>
+    <section data-aos="fade-up" data-aos-duration="1000">
       <div class="gap-4 auto-rows-fr">
         <div
           class="bg-white rounded-2xl p-6 shadow-sm border border-black/5 h-full flex flex-col justify-between"
@@ -305,24 +305,24 @@ onMounted(loadAllData)
           <div class="flex gap-3 mb-4">
             <button
               @click="statusFilter = null"
-              :class="statusFilter === null ? 'bg-third text-white' : 'bg-secondary'"
-              class="px-3 py-1 rounded-md text-sm border transition cursor-pointer"
+              :class="statusFilter === null ? 'bg-linear-to-r from-third to-secondary text-text-secondary' : 'bg-secondary'"
+              class="px-3 py-1 rounded-md text-sm border transition cursor-pointer hover:bg-third transition-all"
             >
               All
             </button>
 
             <button
               @click="statusFilter = 'onprogress'"
-              :class="statusFilter === 'onprogress' ? 'bg-orange-500 text-white' : 'bg-secondary'"
-              class="px-3 py-1 rounded-md text-sm border transition cursor-pointer"
+              :class="statusFilter === 'onprogress' ? 'bg-linear-to-r from-orange-200 to-secondary text-text-secondary' : 'bg-secondary'"
+              class="px-3 py-1 rounded-md text-sm border transition cursor-pointer hover:bg-orange-200 transition-all"
             >
               On Progress
             </button>
 
             <button
               @click="statusFilter = 'done'"
-              :class="statusFilter === 'done' ? 'bg-green-600 text-white' : 'bg-secondary'"
-              class="px-3 py-1 rounded-md text-sm border transition cursor-pointer"
+              :class="statusFilter === 'done' ? 'bg-linear-to-r from-green-200 to-secondary text-text-secondary' : 'bg-secondary'"
+              class="px-3 py-1 rounded-md text-sm border transition cursor-pointer hover:bg-green-200 transition-all"
             >
               Done
             </button>
