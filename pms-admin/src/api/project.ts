@@ -12,20 +12,20 @@ export interface PaginatedProject {
 }
 
 export const getProject = async (page = 1): Promise<PaginatedProject> => {
-  const res = await axios.get('/project', {
+  const res = await axios.get('/projects', {
     params: { page },
   })
   return res.data
 }
 
 export const createProject = async (data: FormData): Promise<Project> => {
-  const res = await axios.post('/project', data, {
+  const res = await axios.post('/projects', data, {
     headers: { 'Content-Type': 'multipart/form-data' },
   })
   return res.data.data
 }
 
 export const updateProject = async (id: number, data: { name: string }): Promise<Project> => {
-  const res = await axios.put(`/project/${id}`, data)
-  return res.data
+  const res = await axios.put(`/projects/${id}`, data)
+  return res.data.data
 }

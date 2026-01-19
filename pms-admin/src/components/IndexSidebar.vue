@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRoute, RouterLink } from 'vue-router'
+import { useRouter, useRoute, RouterLink } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
 
@@ -8,10 +9,18 @@ const route = useRoute()
 const isOpen = ref(false) // mobile drawer
 const isCollapsed = ref(false) // desktop collapse
 
+// ==================== LOGOUT =====================
+const auth = useAuthStore()
+const router = useRouter()
+
+const handleLogout = async () => {
+  await auth.logout()
+  router.push('/login')
+}
 /* ================= MENU ================= */
 const menus = [
   { name: 'Dashboard', to: '/', icon: '🏠' },
-  { name: 'Manage Project', to: '/project', icon: '📁' }, 
+  { name: 'Manage Project', to: '/project', icon: '📁' },
   { name: 'Manage Reports', to: '/reports', icon: '📊' },
 ]
 
@@ -45,30 +54,47 @@ const isActive = (path: string) =>
         ☰
       </button>
     </div>
-
     <!-- MENU -->
-    <nav class="flex-1 px-3 py-4 space-y-2">
-      <RouterLink
-        v-for="menu in menus"
-        :key="menu.name"
-        :to="menu.to"
-        @click="isOpen = false"
-        class="flex items-center gap-3 px-4 py-3 rounded-xl text-text-primary transition-all duration-200"
-        :class="
-          isActive(menu.to).value
-            ? 'bg-linear-to-r from-third to-secondary shadow-sm'
-            : 'hover:bg-fourth/40'
-        "
+    <nav class="flex-1 px-3 py-4 flex flex-col">
+      <div class="space-y-2">
+        <RouterLink
+          v-for="menu in menus"
+          :key="menu.name"
+          :to="menu.to"
+          @click="isOpen = false"
+          class="group flex items-center gap-3 px-4 py-3 rounded-xl text-text-primary transition-all duration-200"
+          :class="
+            isActive(menu.to).value
+              ? 'bg-linear-to-r from-third to-secondary shadow-sm'
+              : 'hover:bg-fourth/40'
+          "
+        >
+          <span class="text-lg opacity-80 transition group-hover:opacity-100">
+            {{ menu.icon }}
+          </span>
+
+          <span v-if="!isCollapsed" class="font-medium truncate">
+            {{ menu.name }}
+          </span>
+        </RouterLink>
+      </div>
+      <div class="my-4 border-t border-white/10"></div>
+
+      <!-- LOGOUT -->
+      <button
+        @click="handleLogout"
+        class="group flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-500/10 transition-all duration-200 cursor-pointer"
       >
-        <span class="text-lg opacity-80">{{ menu.icon }}</span>
-        <span v-if="!isCollapsed" class="font-medium">
-          {{ menu.name }}
-        </span>
-      </RouterLink>
+        <span class="text-lg opacity-80 group-hover:opacity-100">🚪</span>
+        <span v-if="!isCollapsed" class="font-medium"> Logout </span>
+      </button>
     </nav>
 
     <!-- FOOTER -->
-    <div v-if="!isCollapsed" class="p-4 border-t border-black/10 text-sm text-text-secondary">
+    <div
+      v-if="!isCollapsed"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl text-text-primary transition-all duration-200"
+    >
       Project Management System v 1.0
     </div>
   </aside>

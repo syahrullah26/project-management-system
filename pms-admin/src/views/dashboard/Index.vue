@@ -4,6 +4,9 @@ import { getProject } from '@/api/project'
 import { getReports } from '@/api/reports'
 import type { Project } from '@/api/project'
 import type { Reports } from '@/api/reports'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+gsap.registerPlugin(ScrollTrigger)
 defineOptions({ name: 'DashboardView' })
 
 const project = ref<Project[]>([])
@@ -135,34 +138,34 @@ onMounted(loadData)
                 <tr
                   v-for="(item, index) in paginatedData"
                   :key="item.id"
-                  class="odd:bg-white even:bg-secondary/40 hover:bg-secondary/70 transition"
+                  class="group odd:bg-white even:bg-secondary/40 hover:bg-secondary/70 transition-transform duration-300 hover:scale-105 hover:shadow-xl hover:-translate-y-1"
                 >
-                  <td class="px-4 py-3 border font-medium">
+                  <td class="px-4 py-3 border font-medium group-hover:border-transparent">
                     {{ index + 1 }}
                   </td>
 
-                  <td class="px-4 py-3 border">
+                  <td class="px-4 py-3 border group-hover:border-transparent">
                     {{ item.title }}
                   </td>
 
-                  <td class="px-4 py-3 border">
+                  <td class="px-4 py-3 border group-hover:border-transparent">
                     {{ item.project.name ?? '-' }}
                   </td>
 
-                  <td class="px-4 py-3 border max-w-xs truncate">
+                  <td class="px-4 py-3 border max-w-xs truncate group-hover:border-transparent">
                     {{ item.description }}
                   </td>
 
-                  <td class="px-4 py-3 border capitalize">
+                  <td class="px-4 py-3 border capitalize group-hover:border-transparent">
                     {{ item.type }}
                   </td>
 
-                  <td class="px-4 py-3 border capitalize">
+                  <td class="px-4 py-3 border capitalize group-hover:border-transparent">
                     {{ item.priority }}
                   </td>
 
-                  <!-- STATUS BADGE -->
-                  <td class="px-4 py-3 border">
+                  <!-- STATUS -->
+                  <td class="px-4 py-3 border group-hover:border-transparent">
                     <span
                       v-if="item.status === 'onprogress'"
                       class="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-700"

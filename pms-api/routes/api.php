@@ -2,36 +2,49 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\ReportsController;
+
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\Api\ReportsController;
 
+Route::prefix('v1')->group(function () {
 
-Route::prefix('v1')->group(function(){
-    Route::get('health',function(){
-         return response()->json([
+    /*
+    |--------------------------------------------------------------------------
+    | Health Check
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/health', function () {
+        return response()->json([
             'status'  => 'running',
             'service' => 'PMS API Running',
             'version' => '1.0',
         ]);
     });
 
-    Route::get('/project',[ProjectController::class,'index']);
-    Route::post('/project',[ProjectController::class,'store']);
-    Route::put('project/{id}', [ProjectController::class,'update']);
-    Route::delete('project/{id}',[ProjectController::class,'destroy']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+
+    Route::middleware('auth:sanctum')->group(function () {
 
 
-    Route::get('/reports',[ReportsController::class,'index']);
-    Route::post('/reports',[ReportsController::class,'store']);
-    Route::put('reports/{id}',[ReportsController::class,'update']);
-    Route::patch('reports/{id}/status',[ReportsController::class,'updateStatus']);
-    Route::delete('reports/{id}',[ReportsController::class,'destroy']);
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/me', function (Request $request) {
+            return response()->json($request->user());
+        });
 
+
+        Route::apiResource('projects', ProjectController::class)
+            ->only(['index', 'store', 'update', 'destroy']);
+
+        Route::apiResource('reports', ReportsController::class)
+            ->only(['index', 'store', 'update', 'destroy']);
+
+
+        Route::patch('/reports/{id}/status', [ReportsController::class, 'updateStatus']);
+    });
 });
 
-
-
-
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });

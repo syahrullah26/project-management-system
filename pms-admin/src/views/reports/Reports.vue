@@ -305,7 +305,11 @@ onMounted(loadAllData)
           <div class="flex gap-3 mb-4">
             <button
               @click="statusFilter = null"
-              :class="statusFilter === null ? 'bg-linear-to-r from-third to-secondary text-text-secondary' : 'bg-secondary'"
+              :class="
+                statusFilter === null
+                  ? 'bg-linear-to-r from-third to-secondary text-text-secondary'
+                  : 'bg-secondary'
+              "
               class="px-3 py-1 rounded-md text-sm border transition cursor-pointer hover:bg-third transition-all"
             >
               All
@@ -313,7 +317,11 @@ onMounted(loadAllData)
 
             <button
               @click="statusFilter = 'onprogress'"
-              :class="statusFilter === 'onprogress' ? 'bg-linear-to-r from-orange-200 to-secondary text-text-secondary' : 'bg-secondary'"
+              :class="
+                statusFilter === 'onprogress'
+                  ? 'bg-linear-to-r from-orange-200 to-secondary text-text-secondary'
+                  : 'bg-secondary'
+              "
               class="px-3 py-1 rounded-md text-sm border transition cursor-pointer hover:bg-orange-200 transition-all"
             >
               On Progress
@@ -321,7 +329,11 @@ onMounted(loadAllData)
 
             <button
               @click="statusFilter = 'done'"
-              :class="statusFilter === 'done' ? 'bg-linear-to-r from-green-200 to-secondary text-text-secondary' : 'bg-secondary'"
+              :class="
+                statusFilter === 'done'
+                  ? 'bg-linear-to-r from-green-200 to-secondary text-text-secondary'
+                  : 'bg-secondary'
+              "
               class="px-3 py-1 rounded-md text-sm border transition cursor-pointer hover:bg-green-200 transition-all"
             >
               Done
@@ -352,34 +364,34 @@ onMounted(loadAllData)
                 <tr
                   v-for="(item, index) in paginatedData"
                   :key="item.id"
-                  class="odd:bg-white even:bg-secondary/40 hover:bg-secondary/70 transition"
+                  class="group odd:bg-white even:bg-secondary/40 hover:bg-secondary/70 transition-transform duration-300 hover:scale-105 hover:shadow-xl hover:-translate-y-1"
                 >
-                  <td class="px-4 py-3 border font-medium">
+                  <td class="px-4 py-3 border font-medium group-hover:border-transparent">
                     {{ index + 1 }}
                   </td>
 
-                  <td class="px-4 py-3 border">
+                  <td class="px-4 py-3 border group-hover:border-transparent">
                     {{ item.title }}
                   </td>
 
-                  <td class="px-4 py-3 border">
+                  <td class="px-4 py-3 border group-hover:border-transparent">
                     {{ item.project.name ?? '-' }}
                   </td>
 
-                  <td class="px-4 py-3 border max-w-xs truncate">
+                  <td class="px-4 py-3 border max-w-xs truncate group-hover:border-transparent">
                     {{ item.description }}
                   </td>
 
-                  <td class="px-4 py-3 border capitalize">
+                  <td class="px-4 py-3 border capitalize group-hover:border-transparent">
                     {{ item.type }}
                   </td>
 
-                  <td class="px-4 py-3 border capitalize">
+                  <td class="px-4 py-3 border capitalize group-hover:border-transparent">
                     {{ item.priority }}
                   </td>
 
-                  <!-- STATUS BADGE -->
-                  <td class="px-4 py-3 border">
+                  <!-- STATUS -->
+                  <td class="px-4 py-3 border group-hover:border-transparent">
                     <span
                       v-if="item.status === 'onprogress'"
                       class="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-700"
@@ -394,30 +406,31 @@ onMounted(loadAllData)
                     </span>
                   </td>
 
-                  <!-- ACTION -->
-
-                  <td class="px-4 py-3 border text-center">
+                  <!-- ACTIONS -->
+                  <td class="px-4 py-3 border text-center group-hover:border-transparent">
                     <button
                       @click="openDetail(item)"
-                      class="rounded-md bg-gradient-to-r from-[#3F66D6] to-secondary border border-black/5 px-3 py-1 text-xs text-text-primary hover:from-[#2F55C6] hover:to-primary transition-all duration-300 cursor-pointer"
+                      class="rounded-md bg-gradient-to-r from-[#3F66D6] to-secondary border border-black/5 px-3 py-1 text-xs text-text-primary hover:from-[#2F55C6] hover:to-primary transition-all duration-300"
                     >
                       Detail
                     </button>
                   </td>
-                  <td class="px-4 py-3 border text-center">
+
+                  <td class="px-4 py-3 border text-center group-hover:border-transparent">
                     <button
                       v-if="item.status === 'onprogress'"
                       @click="markAsDone(item.id)"
-                      class="text-xs px-3 py-1 rounded-md bg-linear-to-r from-primary to-secondary text-text-primary border border-black/5 hover:from-fourth hover:to-third transition-all duration-300 cursor-pointer"
+                      class="text-xs px-3 py-1 rounded-md bg-linear-to-r from-primary to-secondary text-text-primary border border-black/5 hover:from-fourth hover:to-third transition-all duration-300"
                     >
                       Mark as Done
                     </button>
-                    <span v-else class="text-xs text-gray-400 italic"> — </span>
+                    <span v-else class="text-xs text-gray-400 italic">—</span>
                   </td>
-                  <td class="px-4 py-3 border text-center">
+
+                  <td class="px-4 py-3 border text-center group-hover:border-transparent">
                     <button
                       @click="editReports(item)"
-                      class="text-xs px-3 py-1 rounded-md bg-linear-to-r from-third to-secondary text-text-primary border border-black/5 hover:from-third hover:to-primary transition cursor-pointer"
+                      class="text-xs px-3 py-1 rounded-md bg-linear-to-r from-third to-secondary text-text-primary border border-black/5 hover:from-third hover:to-primary transition"
                     >
                       Edit
                     </button>
